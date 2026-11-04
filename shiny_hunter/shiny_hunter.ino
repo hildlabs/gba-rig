@@ -25,7 +25,7 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 #define DEBUG_MODE true
 
 // === Globale Variablen ===
-int resetCount = 0;                    // Anzahl der Resets
+uint16_t resetCount = 0;               // Anzahl der Resets (0..65534)
 bool foundShiny = false;               // Status ob Shiny gefunden wurde
 const int SHINY_THRESHOLD_MS = 2500;   // Zeitgrenze für Shiny-Erkennung
 const int LDR_DIFF_THRESHOLD = 8;     // Helligkeitsunterschied zur Erkennung der Textbox
@@ -60,6 +60,7 @@ void setup() {
 
   // Zähler aus EEPROM laden
   resetCount = readEEPROM(0);
+  if (resetCount == 0xFFFF) resetCount = 0;  // frisches EEPROM ist 0xFF 0xFF
 }
 
 void loop() {
@@ -197,16 +198,16 @@ void updateLCD(String status) {
 }
 
 // === EEPROM speichern ===
-void writeEEPROM(int address, int value) {
+void writeEEPROM(int address, uint16_t value) {
   EEPROM.write(address, (value >> 8) & 0xFF);
   EEPROM.write(address + 1, value & 0xFF);
 }
 
 // === EEPROM lesen ===
-int readEEPROM(int address) {
+uint16_t readEEPROM(int address) {
   byte high = EEPROM.read(address);
   byte low = EEPROM.read(address + 1);
-  return (high << 8) + low;
+  return ((uint16_t)high << 8) | low;
 }
 
 // === Manuelle Buttons abfragen (für Kontrolle beim Shiny) ===
