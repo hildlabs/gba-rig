@@ -95,7 +95,7 @@ void loop() {
     pressButton(BTN_A, 200);  // Kampf startet
 
     updateLCD("Warte auf Textbox");
-    Serial.print("DEBUG: Warte auf LDR-Differenz > ");
+    Serial.print("DEBUG: Warte auf LDR-Differenz >= ");
     Serial.println(LDR_DIFF_THRESHOLD);
 
     // Textbox-Detektion via LDR
